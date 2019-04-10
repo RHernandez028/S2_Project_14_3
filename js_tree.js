@@ -44,23 +44,35 @@ var wsCount = 0;
 
 window.addEventListener("load", makeTree);
 
+
 function makeTree() {
-      //creates an aside element that has an id with an h1 inside the aside
+      //creates an aside element that has an id of "treeBox" with an h1 inside the aside
       var treeBox = document.createElement("aside");
       treeBox.setAttribute("id", "treeBox");
+
       var nodeTree = document.createElement("h1");
       nodeTree.textContent = "Node Tree";
       treeBox.appendChild(nodeTree);
+
+      //puts the the aside inside the element with the if of main
       document.getElementById("main").appendChild(treeBox);
 
+      //creaets an ordered list node
       var nodeList = document.createElement("ol");
       treeBox.appendChild(nodeList);
+
       var sourceArticle = document.querySelector("#main article");
 
       makeBranches(sourceArticle, nodeList);
+
+      //displays the toatl number of the total number of nodes, the number of element nodes, the number of text nodes and ws nodes
+      document.getElementById("totalNodes").textContent = nodeCount;
+      document.getElementById("elemNodes").textContent = elemCount;
+      document.getElementById("textNodes").textContent = textCount;
+      document.getElementById("wsNodes").textContent = wsCount;
 }
 
-//append node branches to nodetree 
+//append node branches to nodeTree 
 function makeBranches(treeNode, nestedList) {
       nodeCount++;
       var liElem = document.createElement("li");
@@ -69,6 +81,7 @@ function makeBranches(treeNode, nestedList) {
       liElem.appendChild(spanElem);
       nestedList.appendChild(liElem);
 
+      
       if (treeNode.nodeType === 1) {
             elemCount++;
             spanElem.setAttribute("class", "elementNode");
@@ -76,13 +89,22 @@ function makeBranches(treeNode, nestedList) {
       }   else if (treeNode.nodeType === 3) {
             textCount++;
             var textString = treeNode.nodeValue;
-            if (isWhiteSpaceNode(textString) === true) {
+            if (isWhiteSpaceNode(textString)) {
                   wsCount++;
                   spanElem.setAttribute("class", "whiteSpaceNode");
                   spanElem.textContent = "#text";
-            } else if (isWhiteSpaceNode(textString) === true) {
+            } else {
                   spanElem.setAttribute("class", "textNode");
                   spanElem.textContent = textString;
+            }
+      }
+
+      if (treeNode.childNodes.length > 0) {
+            var newList = document.createElement("ol");
+            newList.innerHTML = "|";
+            nestedList.appendChild(newList);
+            for ( var n = treeNode.firstChild; n !== null; n = n.nextSibling) {
+                  makeBranches(n, newList);
             }
       }
 }     
